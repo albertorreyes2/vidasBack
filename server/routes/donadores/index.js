@@ -1,11 +1,11 @@
 /**
- * server/index.js 
+ * donadores/index.js 
  * 
- * Archivo de uso de rutas de la aplicacion.
+ * Archivo de peticiones de donadores. Aqui se encuentran las peticiones de donadores
  * 
  * Code by: ITI Alejandro Partida / ITI Gustavo Reyes / ITI Fernando Rivas 
  * 
- * Nov. 2021
+ * 27 Nov. 2021
  */
 const express = require('express');
 const { beginTransaction } = require('../../db/db');
