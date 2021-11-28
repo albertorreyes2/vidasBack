@@ -12,10 +12,10 @@ const app = express()
 const con = require('../../db/db');
 
 /**
- * @method GET/getDonadores
+ * @method GET/donadores/getDonadores
  * @summary Get all data from donadores table based on idCampana
  * 
- * @param
+ * @param {number} idCampana
  */
 app.get('/donadores/getDonadores', [], (req, res) => {
     const { idCampana } = req.query;
