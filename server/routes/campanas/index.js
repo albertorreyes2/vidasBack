@@ -15,7 +15,7 @@ const con = require('../../db/db');
  * @method get/campaign/getCamps
  * @summary Request to get all campaigns availables
  */
-app.get('/campaign/getCamps', [verifyToken, generalRateLimit], (req, res) => {
+app.get('/campaign/getCamps', [], (req, res) => {
     con.query(`SELECT * FROM campana;`, (err, result) => {
         if (err) {
             return res.json({ ok: true, message: `Ocurrio un error`, err });
@@ -32,7 +32,7 @@ app.get('/campaign/getCamps', [verifyToken, generalRateLimit], (req, res) => {
  * @param {date} fecha
  * @param {string} nombre
  */
-app.post('/campaign/newCamp', [verifyToken, generalRateLimit], (req, res) => {
+app.post('/campaign/newCamp', [], (req, res) => {
     const { fecha = null, nombre = null } = req.body
     if (fecha != null && nombre != null) {
         con.query(`INSERT INTO campana (fecha, nombre) VALUES (?,?)`, [fecha, nombre], (err, campaign) => {

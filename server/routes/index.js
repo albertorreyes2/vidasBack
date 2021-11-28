@@ -10,7 +10,9 @@
 const express = require('express')
 const app = express()
 
+app.use(require('./campanas/index')); //IMPORT OF CAMPAIGNS ARCHIVE.
 app.use(require('./donadores/index')); //IMPORT OF DONADORES ARCHIVE.
 app.use(require('./graficas/index')); //IMPORT OF GRAPHS ARCHIVE.
+app.use(require('./universidades/index')); //IMPORT OF UNI ARCHIVE.
 
 module.exports = app;
