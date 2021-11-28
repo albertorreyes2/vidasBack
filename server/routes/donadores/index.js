@@ -12,15 +12,23 @@ const app = express()
 const con = require('../../db/db');
 
 /**
- * @method post/getDonadores
- * @summary Reqeust to get all data from donadores table
+ * @method GET/getDonadores
+ * @summary Get all data from donadores table based on idCampana
  * 
  * @param
  */
-app.post('/getDonadores', [], (req, res) => {
-    const { } = req.body
+app.get('/donadores/getDonadores', [], (req, res) => {
+    const { idCampana } = req.query;
 
-    db.query(``, [], (err, result) => {
+    con.query(`SELECT camp.nombre AS campana, CONCAT(d.nombre, " ", d.apellido_p, " ", d.apellido_m) AS nombre, d.fecha_nacimiento, d.correo, d.cel, d.tel, d.resp_nombre, d.resp_tel, 
+    d.estudiante, ts.nombre AS tipo_sangre, uni.nombre AS universidad, carr.nombre AS carrera
+    FROM campana_donador cd
+    INNER JOIN donadores d ON cd.id_donador = d.id
+    INNER JOIN campana camp ON camp.id = cd.id_campana
+    INNER JOIN tipos_sangre ts ON d.id_tipo_sangre = ts.id
+    LEFT JOIN estudiante e ON e.id_donador = d.id
+    LEFT JOIN universidades uni ON e.id_uni = uni.id
+    LEFT JOIN carreras carr ON e.id_carrera = carr.id WHERE cd.id_campana = ?`, [idCampana], (err, result) => {
         if (err) {
             logs.error(1, err, req);
             return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
