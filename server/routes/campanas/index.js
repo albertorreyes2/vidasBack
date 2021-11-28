@@ -12,10 +12,8 @@ const app = express()
 const con = require('../../db/db');
 
 /**
- * @method post/
- * @summary
- * 
- * @param
+ * @method get/campaign/getCamps
+ * @summary Request to get all campaigns availables
  */
 app.get('/campaign/getCamps', [verifyToken, generalRateLimit], (req, res) => {
     con.query(`SELECT * FROM campana;`, (err, result) => {
@@ -26,7 +24,6 @@ app.get('/campaign/getCamps', [verifyToken, generalRateLimit], (req, res) => {
         }
     });
 });
-
 
 /**
  * @method post/campaign/newCamp
@@ -51,7 +48,6 @@ app.post('/campaign/newCamp', [verifyToken, generalRateLimit], (req, res) => {
         return res.json({ ok: false, message: "Faltan Datos" });
     }
 });
-
 
 
 module.exports = app;
