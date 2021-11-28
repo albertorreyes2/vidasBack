@@ -12,5 +12,19 @@ const app = express()
 const con = require('../../db/db');
 
 
+app.get('/universidades/getUniversidades', (req, res) => {
+
+    con.query('SELECT * FROM universidades', (err, unis) => {
+        if(err) {
+            console.log(err);
+            res.json({ok: false, message: 'Ocurrió un error'})
+        } else {
+            res.json({ok: true, result: unis});
+        }
+
+    })
+
+})
+
 
 module.exports = app;
