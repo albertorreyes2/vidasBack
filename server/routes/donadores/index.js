@@ -55,20 +55,32 @@ app.post('/getDonadores', [], (req, res) => {
  * @param {number} id_carreras
  */
 app.post('/donador/newDondador', [], (req, res) => {
-    const { nombre = null, apellido_p = null, apellido_m = null, fecha_n = null, correo = null, tel = null, cel = null, matricula = null, id_carrera = null, estudiante = 0, resp_nombre = null, resp_tel = null, resp_direccion = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
-
-    db.query(`SELECT * FROM donadores`, [], (err, result) => {
-        if (err) {
-            return res.json({ ok: false, message: 'Ocurrio un error' });
-        } else {
-            return res.json({ ok: true, result: result });
-        }
-    });
-
-    // if (nombre != null && apellido_p != null && fecha_n != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && resp_direccion != null && id_tipo_sangre != null) {
-    // } else {
-    //     res.json({ ok: false, message: 'Asegurate de llenar todos los campos necesarios.' });
-    // }
+    const { nombre = null, apellido_p = null, apellido_m = '', fecha_n = null, correo = null, tel = '', cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, resp_direccion = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
+    if (nombre != null && apellido_p != null && fecha_n != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && resp_direccion != null && id_tipo_sangre != null) {
+        db.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_n, correo, tel, cel, estudiante, resp_nombre, resp_tel, resp_direccion, id_tipo_sangre)`, [nombre, apellido_p, apellido_m, fecha_n, correo, tel, cel, estudiante, resp_nombre, resp_tel, resp_direccion, id_tipo_sangre], (err, result) => {
+            if (err) {
+                return res.json({ ok: false, message: 'Ocurrio un error' });
+            } else {
+                if (result.affectedRows > 0) {
+                    if (estudiante) {
+                        con.query(`INSERT INTO `, [], (err, result) => {
+                            if (err) {
+                                return res.json({ ok: false, message: 'Ocurrio un error' });
+                            } else {
+                                return verifyRFToken(req, res, { ok: true, result: result })
+                            }
+                        });
+                    } else {
+                        return res.json({ ok: true, result: result });
+                    }
+                } else {
+                    return res.json({ ok: false, message: "No fue posible guardar el donador :(" })
+                }
+            }
+        });
+    } else {
+        res.json({ ok: false, message: 'Asegurate de llenar todos los campos necesarios.' });
+    }
 
 });
 
