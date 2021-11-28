@@ -15,5 +15,6 @@ app.use(require('./donadores/index')); //IMPORT OF DONADORES FILE.
 app.use(require('./graficas/index')); //IMPORT OF GRAPHS FILE.
 app.use(require('./universidades/index')); //IMPORT OF UNI FILE.
 app.use(require('./carreras/carreras')); //IMPORT OF CARRERAS FILE.
+app.use(require('./sangres/index')); //IMPORT OF CARRERAS FILE.
 
 module.exports = app;
