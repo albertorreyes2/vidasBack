@@ -8,7 +8,6 @@
  * 27 Nov. 2021
  */
 const express = require('express');
-const { beginTransaction } = require('../../db/db');
 const app = express()
 const con = require('../../db/db');
 
