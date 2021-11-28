@@ -1,0 +1,26 @@
+{
+  "name": "vidas2021",
+  "version": "1.0.0",
+  "description": "Proyecto de VIDAS version 2021 para la Universidad Tecnologica de Durango",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/albertorreyes2/vidasBack.git"
+  },
+  "keywords": [
+    "VIDAS"
+  ],
+  "author": "Alejandro Partida, Alberto Reyes, Fernando Rivas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/albertorreyes2/vidasBack/issues"
+  },
+  "homepage": "https://github.com/albertorreyes2/vidasBack#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
