@@ -50,21 +50,20 @@ app.get('/donadores/getDonadores', [], (req, res) => {
  * @param {String} apellido_m
  * @param {String} fecha_nacimiento *
  * @param {String} correo *
- * @param {String} tel 
  * @param {String} cel *
- * @param {String} matricula
- * @param {number} id_carrera
- * @param {number} id_campana* 
- * @param {number} estudiante *
+ * @param {number} id_campana * 
+ * 
+ * @param {number} estudiante * 0 / 1
+ * @param {number} id_carreras ** Required just in case the user is student
+ * @param {number} id_uni ** Required just in case the user is student
+ * @param {String} matricula ** Required just in case the user is student
+ * 
  * @param {String} resp_nombre *
  * @param {String} resp_tel *
  * @param {number} id_tipo_sangre *
- * @param {number} id_uni
- * @param {number} id_carreras
- * @param {string} matricula 
  */
 app.post('/donador/newDonador', [], (req, res) => {
-    const { nombre = null, apellido_p = null, apellido_m = '', fecha_nacimiento = null, id_campana = null, correo = null, tel = '', cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
+    const { nombre = null, apellido_p = null, apellido_m = '', fecha_nacimiento = null, id_campana = null, correo = null, cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
     if (nombre != null && apellido_p != null && fecha_nacimiento != null && id_campana != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && id_tipo_sangre != null) {
         //BEGIN TRANSACTION TO SAVE DATA
 
@@ -81,7 +80,7 @@ app.post('/donador/newDonador', [], (req, res) => {
                         });
                     } else {
                         //INSERT DATA INTO DONADOR TABLE
-                        con.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_nacimiento, correo, tel, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre) VALUES (?,?,?,?,?,?,?,?,?,?,?) `, [nombre, apellido_p, apellido_m, fecha_nacimiento, correo, tel, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre], (err, donador) => {
+                        con.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre) VALUES (?,?,?,?,?,?,?,?,?,?,?) `, [nombre, apellido_p, apellido_m, fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre], (err, donador) => {
                             if (err) {
                                 con.rollback(() => {
                                     console.log(err);
