@@ -1,14 +1,17 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const https = require('https');
+const http = require('http');
 const bodyParser = require('body-parser');
-
 
 app.use(bodyParser.json({ limit: '50mb' }));
 
+//IMPORT INDEX ROUTES
+app.use(require('./server/routes/index'));
 
-let server = https.createServer({
+
+let server = http.createServer({
+
 }, app)
 
 

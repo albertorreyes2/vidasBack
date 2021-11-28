@@ -10,7 +10,7 @@
 const express = require('express')
 const app = express()
 
-
+app.use(require('./donadores/index')); //IMPORT OF DONADORES ARCHIVE.
 
 
 module.exports = app;
