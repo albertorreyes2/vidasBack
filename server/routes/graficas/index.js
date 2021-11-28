@@ -26,10 +26,9 @@ app.post('/graph/ByPreDon', [], (req, res) => {
         (SELECT COUNT(*) WHERE cd.si_dono = 1) AS donantes 
         FROM campana_donador AS cd WHERE cd.id_campana = ?;`, [id_campanas], (err, result) => {
             if (err) {
-                logs.error(1, err, req);
-                return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+                return res.json({ ok: true, message: `Ocurrio un error`, err });
             } else {
-                return verifyRFToken(req, res, { ok: true, result: result })
+                return res.json({ ok: true, result: result })
             }
         });
     } else {
@@ -54,10 +53,9 @@ app.post('/graph/ByBloodType', [], (req, res) => {
         tipos_sangre AS ts ON (d.id_tipo_sangre = ts.id AND d.id = cd.id_donador)
         WHERE cd.si_dono = 1 AND cd.id_campana = ? GROUP BY ts.nombre;`, [id_campanas], (err, result) => {
             if (err) {
-                logs.error(1, err, req);
-                return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+                return res.json({ ok: true, message: `Ocurrio un error`, err });
             } else {
-                return verifyRFToken(req, res, { ok: true, result: result })
+                return res.json({ ok: true, result: result })
             }
         });
     } else {
@@ -82,10 +80,9 @@ app.post('/graph/ByStForDon', [], (req, res) => {
         WHERE cd.si_dono = 1 AND cd.id_campana = ?
         GROUP BY d.estudiante;`, [id_campanas], (err, result) => {
             if (err) {
-                logs.error(1, err, req);
-                return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+                return res.json({ ok: true, message: `Ocurrio un error`, err });
             } else {
-                return verifyRFToken(req, res, { ok: true, result: result })
+                return res.json({ ok: true, result: result })
             }
         });
     } else {
@@ -109,10 +106,9 @@ app.post('/graph/ByStForPreDon', [], (req, res) => {
         WHERE cd.si_dono = 0 AND cd.id_campana = ?
         GROUP BY d.estudiante;`, [id_campanas], (err, result) => {
             if (err) {
-                logs.error(1, err, req);
-                return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+                return res.json({ ok: true, message: `Ocurrio un error`, err });
             } else {
-                return verifyRFToken(req, res, { ok: true, result: result })
+                return res.json({ ok: true, result: result })
             }
         });
     } else {
@@ -142,18 +138,15 @@ app.post('/graph/ByUniPreDon', [], (req, res) => {
         carreras AS c ON d.id = cd.id_donador AND d.id = e.id_donador AND e.id_uni = u.id AND e.id_carrera = c.id
         WHERE cd.id_campana = ? GROUP BY u.id;`, [id_campanas], (err, result) => {
             if (err) {
-                logs.error(1, err, req);
-                return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+                return res.json({ ok: true, message: `Ocurrio un error` });
             } else {
-                return verifyRFToken(req, res, { ok: true, result: result })
+                return res.json({ ok: true, result: result });
             }
         });
     } else {
         res.json({ ok: false, message: 'Faltan datos' });
     }
 });
-
-
 
 
 module.exports = app;

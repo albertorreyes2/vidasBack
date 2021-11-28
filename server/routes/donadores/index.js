@@ -31,9 +31,9 @@ app.get('/donadores/getDonadores', [], (req, res) => {
     LEFT JOIN carreras carr ON e.id_carrera = carr.id WHERE cd.id_campana = ?`, [idCampana], (err, result) => {
         if (err) {
             logs.error(1, err, req);
-            return verifyRFToken(req, res, { ok: true, message: `Ocurrio un error`, err });
+            return res.json({ ok: true, message: `Ocurrio un error`, err });
         } else {
-            return verifyRFToken(req, res, { ok: true, result: result })
+            return res.json({ ok: true, result: result });
         }
     });
 
@@ -44,7 +44,7 @@ app.get('/donadores/getDonadores', [], (req, res) => {
  * @method post/donador/newDonador
  * @summary Request to add a new donador, it saves the new entry into the DataBase
  * 
- * Fields requireds :
+ * Data required *
  * @param {String} nombre *
  * @param {String} apellido_p *
  * @param {String} apellido_m
