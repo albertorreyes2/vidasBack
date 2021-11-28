@@ -1,7 +1,7 @@
 /**
  * donadores/index.js 
  * 
- * Archivo de peticiones de donadores. Aqui se encuentran las peticiones de donadores
+ * Dondadores archive, here are all donadores table request.
  * 
  * Code by: ITI Alejandro Partida / ITI Gustavo Reyes / ITI Fernando Rivas 
  * 
@@ -42,7 +42,7 @@ app.get('/donadores/getDonadores', [], (req, res) => {
 
 /**
  * @method post/donador/newDonador
- * @summary Request to add a ner donador, it saves the new entry into the DataBase
+ * @summary Request to add a new donador, it saves the new entry into the DataBase
  * 
  * Fields requireds :
  * @param {String} nombre *
