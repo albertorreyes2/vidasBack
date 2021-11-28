@@ -7,9 +7,10 @@
  * 
  * Nov. 2021
  */
-const express = require('express')
+const express = require('express');
+const { beginTransaction } = require('../../db/db');
 const app = express()
-const db = require('../../db/db');
+const con = require('../../db/db');
 
 /**
  * @method post/getDonadores
@@ -40,48 +41,127 @@ app.post('/getDonadores', [], (req, res) => {
  * @param {String} nombre *
  * @param {String} apellido_p *
  * @param {String} apellido_m
- * @param {String} fecha_n *
+ * @param {String} fecha_nacimiento *
  * @param {String} correo *
  * @param {String} tel 
  * @param {String} cel *
  * @param {String} matricula
  * @param {number} id_carrera
+ * @param {number} id_campana* 
  * @param {number} estudiante *
  * @param {String} resp_nombre *
  * @param {String} resp_tel *
- * @param {String} resp_direccion *
  * @param {number} id_tipo_sangre *
  * @param {number} id_uni
  * @param {number} id_carreras
+ * @param {string} matricula 
  */
-app.post('/donador/newDondador', [], (req, res) => {
-    const { nombre = null, apellido_p = null, apellido_m = '', fecha_n = null, correo = null, tel = '', cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, resp_direccion = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
-    if (nombre != null && apellido_p != null && fecha_n != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && resp_direccion != null && id_tipo_sangre != null) {
-        db.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_n, correo, tel, cel, estudiante, resp_nombre, resp_tel, resp_direccion, id_tipo_sangre)`, [nombre, apellido_p, apellido_m, fecha_n, correo, tel, cel, estudiante, resp_nombre, resp_tel, resp_direccion, id_tipo_sangre], (err, result) => {
+app.post('/donador/newDonador', [], (req, res) => {
+    const { nombre = null, apellido_p = null, apellido_m = '', fecha_nacimiento = null, id_campana = null, correo = null, tel = '', cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, id_tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
+    if (nombre != null && apellido_p != null && fecha_nacimiento != null && id_campana != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && id_tipo_sangre != null) {
+        //BEGIN TRANSACTION TO SAVE DATA
+
+        con.getConnection((err, con) => {
             if (err) {
-                return res.json({ ok: false, message: 'Ocurrio un error' });
+                console.log(err)
             } else {
-                if (result.affectedRows > 0) {
-                    if (estudiante) {
-                        con.query(`INSERT INTO `, [], (err, result) => {
-                            if (err) {
-                                return res.json({ ok: false, message: 'Ocurrio un error' });
-                            } else {
-                                return verifyRFToken(req, res, { ok: true, result: result })
-                            }
+                con.beginTransaction(err => {
+                    if (err) {
+                        con.rollback(() => {
+                            console.log(err);
+                            con.release();
+                            res.json({ ok: false, message: "Ocurrion un error." });
                         });
                     } else {
-                        return res.json({ ok: true, result: result });
+                        //INSERT DATA INTO DONADOR TABLE
+                        con.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_nacimiento, correo, tel, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre) VALUES (?,?,?,?,?,?,?,?,?,?,?) `, [nombre, apellido_p, apellido_m, fecha_nacimiento, correo, tel, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre], (err, donador) => {
+                            if (err) {
+                                con.rollback(() => {
+                                    console.log(err);
+                                    con.release();
+                                    return res.json({ ok: false, message: 'Ocurrio un error' });
+                                });
+                            } else {
+                                if (donador.affectedRows > 0) {
+                                    //INSERT DATA INTO campana_donador
+                                    con.query(`INSERT INTO campana_donador (id_campana, id_donador) VALUES (?,?) `, [id_campana, donador.insertId], (err, campana_donador) => {
+                                        if (err) {
+                                            con.rollback(() => {
+                                                console.log(err);
+                                                con.release();
+                                                res.json({ ok: false, message: "Ocurrion un error." });
+                                            });
+                                        } else {
+                                            if (campana_donador.affectedRows > 0) {
+                                                if (estudiante) {
+                                                    // IN CASE DONADOR IS STUDENT INSERT DATA INTO 
+                                                    if (id_carreras != null && id_uni != null) {
+                                                        con.query(`INSERT INTO estudiante (id_donador, id_uni, id_carrera, matricula) VALUES (?,?,?,?) `, [donador.insertId, id_uni, id_carreras, matricula], (err, result) => {
+                                                            if (err) {
+                                                                con.rollback(() => {
+                                                                    console.log(err);
+                                                                    con.release();
+                                                                    return res.json({ ok: false, message: 'Ocurrio un error' });
+                                                                });
+                                                            } else {
+                                                                con.commit(err => {
+                                                                    if (err) {
+                                                                        con.rollback(() => {
+                                                                            console.log(err);
+                                                                            con.release();
+                                                                            return res.json({ ok: false, message: 'Ocurrio un error' });
+                                                                        });
+                                                                    } else {
+                                                                        return res.json({ ok: true, message: '¡Guardado con éxito!' });
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    } else {
+                                                        con.rollback(() => {
+                                                            console.log(err);
+                                                            con.release();
+                                                            return res.json({ ok: false, message: 'Asegurate de llenar todos los campos necesarios del estudiante.' });
+                                                        });
+                                                    }
+
+                                                } else {
+                                                    con.commit(err => {
+                                                        if (err) {
+                                                            con.rollback(() => {
+                                                                console.log(err);
+                                                                con.release();
+                                                                return res.json({ ok: false, message: 'Ocurrio un error' });
+                                                            });
+                                                        } else {
+                                                            return res.json({ ok: true, message: '¡Guardado con éxito!' });
+                                                        }
+                                                    })
+                                                }
+                                            } else {
+                                                con.rollback(() => {
+                                                    console.log(err);
+                                                    con.release();
+                                                    return res.json({ ok: false, message: "No fue posible guardar el donador :(" });
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    con.rollback(() => {
+                                        console.log(err);
+                                        con.release();
+                                        return res.json({ ok: false, message: "No fue posible guardar el donador :(" });
+                                    });
+                                }
+                            }
+                        });
                     }
-                } else {
-                    return res.json({ ok: false, message: "No fue posible guardar el donador :(" })
-                }
+                });
             }
         });
-    } else {
-        res.json({ ok: false, message: 'Asegurate de llenar todos los campos necesarios.' });
-    }
 
+    } else return res.json({ ok: false, message: 'Asegurate de llenar todos los campos necesarios.' });
 });
 
 
