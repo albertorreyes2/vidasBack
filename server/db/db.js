@@ -2,10 +2,10 @@ const mysql = require('mysql2');
 
 const con = mysql.createPool({
     connectionLimit: 50,
-    host: 'localhost',
-    user: 'sistemUser',
-    password: 'sistemUser123*3',
-    database: 'vidas_utd',
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE ,
 });
 
 con.query("SELECT 1", (err, result) => { })
