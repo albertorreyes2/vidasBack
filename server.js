@@ -15,10 +15,10 @@ let server = http.createServer({
 
 }, app)
 
+//redirect this routes into the front end build.
 app.get(["/", "/registro", "/donadores", "/reportes"], (req, res) => {
     res.sendFile(path.join(__dirname, 'server', 'build', 'index.html'))
 });
-
 
 server.listen(3000, function () {
     const d = new Date();
