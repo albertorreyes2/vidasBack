@@ -16,26 +16,30 @@ const con = require('../../db/db');
  * @summary Get all data from donadores table based on idCampana
  * 
  * @param {number} idCampana
+ * @param {number} si_dono
  */
 app.get('/donadores/getDonadores', [], (req, res) => {
-    const { idCampana } = req.query;
-
-    con.query(`SELECT camp.nombre AS campana, CONCAT(d.nombre, " ", d.apellido_p, " ", d.apellido_m) AS nombre, d.fecha_nacimiento, d.correo, d.cel, d.tel, d.resp_nombre, d.resp_tel, 
-    d.estudiante, ts.nombre AS tipo_sangre, uni.nombre AS universidad, carr.nombre AS carrera
-    FROM campana_donador cd
-    INNER JOIN donadores d ON cd.id_donador = d.id
-    INNER JOIN campana camp ON camp.id = cd.id_campana
-    INNER JOIN tipos_sangre ts ON d.id_tipo_sangre = ts.id
-    LEFT JOIN estudiante e ON e.id_donador = d.id
-    LEFT JOIN universidades uni ON e.id_uni = uni.id
-    LEFT JOIN carreras carr ON e.id_carrera = carr.id WHERE cd.id_campana = ?`, [idCampana], (err, result) => {
-        if (err) {
-            logs.error(1, err, req);
-            return res.json({ ok: true, message: `Ocurrio un error`, err });
-        } else {
-            return res.json({ ok: true, result: result });
-        }
-    });
+    const { idCampana = null, si_dono = null } = req.query;
+    if (idCampana != null) {
+        con.query(`SELECT camp.nombre AS campana, CONCAT(d.nombre, " ", d.apellido_p, " ", d.apellido_m) AS nombre, d.fecha_nacimiento, d.correo, d.cel, d.tel, d.resp_nombre, d.resp_tel, 
+        d.estudiante, ts.nombre AS tipo_sangre, uni.nombre AS universidad, carr.nombre AS carrera
+        FROM campana_donador cd
+        INNER JOIN donadores d ON cd.id_donador = d.id
+        INNER JOIN campana camp ON camp.id = cd.id_campana
+        INNER JOIN tipos_sangre ts ON d.id_tipo_sangre = ts.id
+        LEFT JOIN estudiante e ON e.id_donador = d.id
+        LEFT JOIN universidades uni ON e.id_uni = uni.id
+        LEFT JOIN carreras carr ON e.id_carrera = carr.id WHERE cd.id_campana = ? ${si_dono != null ? `AND cd.si_dono = ${si_dono}` : ``}`, [idCampana], (err, result) => {
+            if (err) {
+                logs.error(1, err, req);
+                return res.json({ ok: true, message: `Ocurrio un error`, err });
+            } else {
+                return res.json({ ok: true, result: result });
+            }
+        });
+    } else {
+        return res.json({ ok: false, message: "Faltan datos." });
+    }
 
 });
 
