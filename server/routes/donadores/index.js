@@ -67,7 +67,7 @@ app.get('/donadores/getDonadores', [], (req, res) => {
  * @param {number} tipo_sangre *
  */
 app.post('/donador/newDonador', [], (req, res) => {
-    const { nombre = null, apellido_p = null, apellido_m = '', fecha_nacimiento = null, anio_campana = null, correo = null, cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, tipo_sangre = null, id_uni = null, id_carreras = null } = req.body
+    const { nombre = null, apellido_p = null, apellido_m = '', fecha_nacimiento = null, anio_campana = null, correo = null, cel = null, matricula = null, estudiante = 0, resp_nombre = null, resp_tel = null, tipo_sangre = null, id_universidad = null, id_carrera = null } = req.body
     if (nombre != null && apellido_p != null && fecha_nacimiento != null && anio_campana != null && correo != null && cel != null && resp_nombre != null && resp_tel != null && tipo_sangre != null) {
         //BEGIN TRANSACTION TO SAVE DATA
 
@@ -84,7 +84,7 @@ app.post('/donador/newDonador', [], (req, res) => {
                         });
                     } else {
                         //INSERT DATA INTO DONADOR TABLE
-                        con.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre) VALUES (?,?,?,?,?,?,?,?,?,?,(SELECT id FROM tipos_sangre WHERE tipos_sangre.nombre = ?)) `, [nombre, apellido_p, apellido_m, fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, tipo_sangre], (err, donador) => {
+                        con.query(`INSERT INTO donadores (nombre, apellido_p, apellido_m ,fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, id_tipo_sangre) VALUES (?,?,?,?,?,?,?,?,?,(SELECT id FROM tipos_sangre WHERE tipos_sangre.nombre = ?)) `, [nombre, apellido_p, apellido_m, fecha_nacimiento, correo, cel, estudiante, resp_nombre, resp_tel, tipo_sangre], (err, donador) => {
                             if (err) {
                                 con.rollback(() => {
                                     console.log(err);
@@ -94,7 +94,7 @@ app.post('/donador/newDonador', [], (req, res) => {
                             } else {
                                 if (donador.affectedRows > 0) {
                                     //INSERT DATA INTO campana_donador
-                                    con.query(`INSERT INTO campana_donador (id_campana, id_donador) VALUES ((SELECT id FROM campana WHERE YEAR(campana.fecha) = ? )),?) `, [anio_campana, donador.insertId], (err, campana_donador) => {
+                                    con.query(`INSERT INTO campana_donador (id_campana, id_donador) VALUES ((SELECT id FROM campana WHERE YEAR(campana.fecha) = ? ),?) `, [anio_campana, donador.insertId], (err, campana_donador) => {
                                         if (err) {
                                             con.rollback(() => {
                                                 console.log(err);
@@ -105,8 +105,8 @@ app.post('/donador/newDonador', [], (req, res) => {
                                             if (campana_donador.affectedRows > 0) {
                                                 if (estudiante) {
                                                     // IN CASE DONADOR IS STUDENT INSERT DATA INTO 
-                                                    if (id_carreras != null && id_uni != null) {
-                                                        con.query(`INSERT INTO estudiante (id_donador, id_uni, id_carrera, matricula) VALUES (?,?,?,?) `, [donador.insertId, id_uni, id_carreras, matricula], (err, result) => {
+                                                    if (id_carrera != null && id_universidad != null) {
+                                                        con.query(`INSERT INTO estudiante (id_donador, id_uni, id_carrera, matricula) VALUES (?,?,?,?) `, [donador.insertId, id_universidad, id_carrera, matricula], (err, result) => {
                                                             if (err) {
                                                                 con.rollback(() => {
                                                                     console.log(err);
