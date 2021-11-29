@@ -22,8 +22,8 @@ app.post('/graph/ByPreDon', [], (req, res) => {
     const { id_campana = null } = req.body
     if (id_campana != null) {
         con.query(`SELECT 
-        (SELECT COUNT(*) WHERE cd.si_dono = 0) AS predonantes,
-        (SELECT COUNT(*) WHERE cd.si_dono = 1) AS donantes 
+        SUM((SELECT COUNT(*) WHERE cd.si_dono = 0)) AS predonantes,
+        SUM((SELECT COUNT(*) WHERE cd.si_dono = 1))AS  donantes 
         FROM campana_donador AS cd WHERE cd.id_campana = ?;`, [id_campana], (err, result) => {
             if (err) {
                 return res.json({ ok: true, message: `Ocurrio un error`, err });
