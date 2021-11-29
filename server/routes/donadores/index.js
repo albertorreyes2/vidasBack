@@ -175,4 +175,32 @@ app.post('/donador/newDonador', [], (req, res) => {
 });
 
 
+/**
+ * @method post/donador/updDonador
+ * @summary Request to update campana_donador field si_dono to 1
+ * 
+ * @param {number} id_donador
+ * @param {number} id_campana
+ */
+app.post('/donador/updDonador', [], (req, res) => {
+    const { id_donador = null, id_campana = null } = req.body
+
+    if (id_donador != null && id_campana != null) {
+        con.query(`UPDATE campana_donador SET campana_donador.si_dono = 1 WHERE campana_donador.id_campana = ? AND campana_donador.id_donador = ?;`, [id_campana, id_donador], (err, result) => {
+            if (err) {
+                res.json({ ok: false, message: "Ocurrion un error." });
+            } else {
+                if (result.affectedRows > 0) {
+                    return res.json({ ok: true, message: "Actualizado con éxito." });
+                } else {
+                    return res.json({ ok: false, message: "No fue posible actualizar el registro." });
+                }
+            }
+        });
+    } else {
+        return res.json({ ok: false, message: "Fatan Datos." });
+    }
+});
+
+
 module.exports = app;
