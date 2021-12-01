@@ -20,7 +20,7 @@ app.get(["/", "/registro", "/donadores", "/reportes"], (req, res) => {
     res.sendFile(path.join(__dirname, 'server', 'build', 'index.html'))
 });
 
-server.listen(3000, function () {
+server.listen(process.env.PORT || 3000, function () {
     const d = new Date();
     const day = d.toLocaleDateString();
     const hrs = d.toLocaleTimeString();
