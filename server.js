@@ -15,6 +15,8 @@ let server = http.createServer({
 
 }, app)
 
+app.use(express.static(path.join(__dirname, 'server', 'build')));
+
 //redirect this routes into the front end build.
 app.get(["/", "/registro", "/donadores", "/reportes"], (req, res) => {
     res.sendFile(path.join(__dirname, 'server', 'build', 'index.html'))
