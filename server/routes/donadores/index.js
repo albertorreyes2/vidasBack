@@ -22,7 +22,7 @@ app.get('/donadores/getDonadores', [], (req, res) => {
     const { idCampana = null } = req.query;
     if (idCampana != null) {
         con.query(`SELECT camp.nombre AS campana, CONCAT(d.nombre, " ", d.apellido_p, " ", d.apellido_m) AS nombre, d.fecha_nacimiento, d.correo, d.cel, d.tel, d.resp_nombre, d.resp_tel, 
-        d.estudiante, ts.nombre AS tipo_sangre, uni.nombre AS universidad, carr.nombre AS carrera, cd.si_dono, cd.id id_campana_donador
+        d.estudiante, ts.nombre AS tipo_sangre, uni.nombre AS universidad, carr.nombre AS carrera, cd.si_dono, cd.id as id_campana_donador
         FROM campana_donador cd
         INNER JOIN donadores d ON cd.id_donador = d.id
         INNER JOIN campana camp ON camp.id = cd.id_campana
